@@ -1,0 +1,5 @@
+C:\Users\Arek\documents\visual studio 2015\Projects\DigitRecognition\NeuralNetLibrary\bin\Release\NeuralNetLibrary.dll
+C:\Users\Arek\documents\visual studio 2015\Projects\DigitRecognition\NeuralNetLibrary\bin\Release\NeuralNetLibrary.pdb
+C:\Users\Arek\documents\visual studio 2015\Projects\DigitRecognition\NeuralNetLibrary\obj\Release\NeuralNetLibrary.csprojResolveAssemblyReference.cache
+C:\Users\Arek\documents\visual studio 2015\Projects\DigitRecognition\NeuralNetLibrary\obj\Release\NeuralNetLibrary.dll
+C:\Users\Arek\documents\visual studio 2015\Projects\DigitRecognition\NeuralNetLibrary\obj\Release\NeuralNetLibrary.pdb

@@ -1,0 +1,98 @@
+﻿<Window x:Class="DigitRecognition.LearningProgressWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:charting="clr-namespace:System.Windows.Forms.DataVisualization.Charting;assembly=System.Windows.Forms.DataVisualization"
+        xmlns:local="clr-namespace:DigitRecognition"
+        mc:Ignorable="d"
+        Title="Uczenie sieci"  
+        Width="500"
+        SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        Loaded="Window_Loaded">
+
+    <StackPanel Margin="10">
+        <Grid Height="70">
+            <Grid.RowDefinitions>
+                <RowDefinition/>
+                <RowDefinition/>
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <Label
+                Content="Epoka:"
+                VerticalAlignment="Center"
+                />
+
+            <Label
+                Grid.Row="1"
+                Content="Błąd:"
+                VerticalAlignment="Center"
+                />
+
+            <Label
+                Name="epochLabel"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                />
+
+            <Label
+                Name="errorLabel"
+                Grid.Row="1"
+                Grid.Column="1"
+                VerticalAlignment="Center"
+                />
+        </Grid>
+        
+        <ProgressBar
+            Name="learningProgressBar"
+            Grid.Row="2"
+            Grid.ColumnSpan="2"
+            Margin="5"
+            Height="20"
+            />
+        <WindowsFormsHost x:Name="host">
+            <charting:Chart x:Name="chart">
+                <charting:Chart.Series>
+                    <charting:Series
+                        Name="series"   
+                        ChartType="FastLine"
+                        BorderDashStyle="Solid"
+                        BorderWidth="3"
+                        />
+                </charting:Chart.Series>
+                
+                <charting:Chart.ChartAreas>
+                    <charting:ChartArea
+                        Name="chartArea"
+                        />
+                </charting:Chart.ChartAreas>
+            </charting:Chart>
+        </WindowsFormsHost>
+
+        <CheckBox
+            Grid.Row="3"
+            Grid.ColumnSpan="2"
+            Content="Wyłącz aktualizowanie postępu"
+            Margin="5,5,0,5"
+            VerticalAlignment="Center"
+            Checked="CheckBox_Checked"
+            Unchecked="CheckBox_Unchecked"
+            />
+        
+        <Button
+            Name="abortButton"
+            Grid.Row="4"
+            Grid.ColumnSpan="2"
+            Margin="5"
+            Content="Przerwij" 
+            Click="Abort_Button_Click"
+            />
+    </StackPanel>
+</Window>

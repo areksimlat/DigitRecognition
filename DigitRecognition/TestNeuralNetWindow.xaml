@@ -1,0 +1,62 @@
+﻿<Window x:Class="DigitRecognition.TestNeuralNetWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DigitRecognition"
+        mc:Ignorable="d"
+        Title="Testowanie sieci" 
+        Height="400" 
+        Width="560"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded">
+    
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition/>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="30"/>
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+            <Label Content="Próbka:"/>
+            <Label Name="currentSampleLabel" Content="0"/>
+            <Label Content="/"/>
+            <Label Name="allSamplesLabel" Margin="0,0,5,0"/>
+            <Label Content="Oczekiwano:"/>
+            <Label Name="expectedValueLabel" Margin="0,0,5,0"/>
+            <Label Content="Otrzymano:"/>
+            <Label Name="receivedValueLabel" Margin="0,0,5,0"/>
+            <Label Content="Prawdopodobieństwo:"/>
+            <Label Name="probabilityLabel"/>
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1">
+            <Grid Name="SampleGrid">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                
+                <Label Content="Próbka" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Content="Poprawnych" FontWeight="Bold" Grid.Column="1" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Content="Błędych" FontWeight="Bold"  Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Content="Wszystkich" FontWeight="Bold" Grid.Column="3" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                <Label Content="%" FontWeight="Bold" Grid.Column="4" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+            </Grid>
+        </ScrollViewer>
+        
+        <ProgressBar Name="testProgressBar" Grid.Row="2" Margin="0,5,0,5"/>
+
+        <Button Name="abortButton" Grid.Row="3" Margin="0,5,0,5" Content="Przerwij" Click="Abort_Button_Click"/>
+    </Grid>
+</Window>

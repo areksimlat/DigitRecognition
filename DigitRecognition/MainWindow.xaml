@@ -1,0 +1,447 @@
+﻿<Window x:Class="DigitRecognition.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:DigitRecognition"
+        mc:Ignorable="d"
+        Title="Rozpoznawanie pisma" 
+        Width="635"
+        Height="614"
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen">
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top">            
+            <MenuItem Header="Sieć">
+                <MenuItem Header="Utwórz" Click="CreateNeuralNetwork_MenuItem_Click"/>
+                <MenuItem Header="Otwórz" Click="LoadNetworkFromFile_MenuItem_Click"/>
+                <MenuItem Header="Zapisz" Click="SaveNetworkFromFile_MenuItem_Click"/>                
+            </MenuItem>
+            <MenuItem Header="Dane">
+                <MenuItem Header="Semeion (1593 rekordów) (16x16 pixel)" Click="SemeionLoad_MenuItem_Click"/>
+                <MenuItem Header="Kaggle (42000 rekordów) (28x28 pixel)" Click="KaggleLoad_MenuItem_Click"/>                
+            </MenuItem>
+        </Menu>
+
+        <StatusBar DockPanel.Dock="Bottom">
+            <StatusBarItem Content="Sieć:"/>
+            <StatusBarItem Name="neuralNetStatus" Content="Brak"/>
+            <StatusBarItem Content="Dane:" Margin="20,0,0,0"/>
+            <StatusBarItem Name="dataStatus" Content="Brak"/>
+        </StatusBar>
+
+        <Grid Name="ContentGrid" Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="250"/>
+                <ColumnDefinition/>
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Margin="0,0,5,0">
+                <GroupBox 
+                    Name="DataSettingsGroupBox" 
+                    Header="Ustawienia danych" 
+                    Margin="0,0,0,5"
+                    IsEnabled="False">
+                    
+                    <Grid Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="30"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label
+                            Content="Uczące (%):"
+                            VerticalAlignment="Center"
+                            />
+
+                        <Label
+                            Grid.Row="1"
+                            Content="Walidujące (%):"
+                            VerticalAlignment="Center"
+                            />
+
+                        <Label
+                            Grid.Row="2"
+                            Content="Testujące (%):"
+                            VerticalAlignment="Center"
+                            />
+
+                        <TextBox
+                            Name="learningDataTextBox"
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Width="27"
+                            LostFocus="learningDataTextBox_LostFocus"
+                            />
+
+                        <TextBox
+                            Name="validateDataTextBox"
+                            Grid.Row="1"
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Width="27"
+                            LostFocus="validateDataTextBox_LostFocus"
+                            />
+
+                        <TextBox
+                            Name="testingDataTextBox"
+                            Grid.Row="2"
+                            Grid.Column="2"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Width="27"
+                            LostFocus="testingDataTextBox_LostFocus"
+                            />
+
+                        <Slider 
+                            Name="learningDataSlider"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Minimum="0"
+                            Maximum="100"
+                            Value="70"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="learningDataSlider_ValueChanged"
+                            />
+
+                        <Slider 
+                            Name="validateDataSlider"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Minimum="0"
+                            Maximum="100"
+                            Value="10"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="validateDataSlider_ValueChanged"
+                            />
+
+                        <Slider 
+                            Name="testingDataSlider"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            Minimum="0"
+                            Maximum="100" 
+                            Value="20"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="True"
+                            ValueChanged="testingDataSlider_ValueChanged"
+                            />
+
+                        <CheckBox
+                            Name="swapOrderCheckBox"
+                            Grid.Row="3" 
+                            Grid.ColumnSpan="3"
+                            VerticalAlignment="Center"
+                            Margin="5,5,0,5"
+                            Content="Zmień kolejność danych"
+                            />
+
+                        <Button 
+                            Name="confirmDataButton"
+                            Grid.Row="4" 
+                            Grid.ColumnSpan="3" 
+                            Content="Zatwierdź" 
+                            Margin="5,5,0,0"
+                            Click="confirmDataButton_Click"
+                            />
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox 
+                    Name="LearningSettingsGroupBox" 
+                    Header="Ustawienia uczenia" 
+                    Margin="0,5,0,5" 
+                    IsEnabled="False">
+
+                    <Grid Margin="5">
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="150"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label
+                            Content="Współczynnik uczenia:"
+                            />
+
+                        <Label
+                            Grid.Row="1"
+                            Content="Momentum:"
+                            />
+
+                        <Label
+                            Grid.Row="2"
+                            Content="Dopuszczalny błąd:"
+                            />
+
+                        <TextBox
+                            Name="learningRateTextBox"
+                            Grid.Column="1"
+                            Margin="3"                        
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Text="0,1"
+                            LostFocus="learningRateTextBox_LostFocus"
+                            />
+
+                        <TextBox
+                            Name="momentumTextBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="3"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Text="0,9"
+                            LostFocus="momentumTextBox_LostFocus"
+                            />
+
+                        <TextBox
+                            Name="errorThresholdTextBox"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            Margin="3"
+                            VerticalContentAlignment="Center"
+                            HorizontalContentAlignment="Center"
+                            Text="0,1"
+                            LostFocus="errorThresholdTextBox_LostFocus"
+                            />
+
+                        <StackPanel Grid.Row="3" Grid.ColumnSpan="2" Margin="5" Orientation="Horizontal">
+                            <CheckBox Name="multithreadingComboBox" Content="Multithreading" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                            <Button Content="Uruchom uczenie" Click="TrainNeuralNetwork_Button_Click" Width="104"/>
+                        </StackPanel>                        
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox 
+                    Name="ShowDataGroupBox" 
+                    Header="Dane" 
+                    Margin="0,5,0,5"
+                    IsEnabled="False">
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label
+                            Content="Pokaż dane:"
+                            VerticalAlignment="Center"
+                            />
+
+                        <Label
+                            Grid.Row="1"
+                            Content="Pokaż próbkę:"
+                            VerticalAlignment="Center"
+                            />
+
+                        <ComboBox
+                            Name="showDataComboBox"
+                            Grid.Column="1"
+                            Margin="5"
+                            Initialized="showDataComboBox_Initialized"
+                            SelectionChanged="showDataComboBox_SelectionChanged"
+                            />
+
+                        <ComboBox
+                            Name="showItemComboBox"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            Margin="5"
+                            SelectionChanged="showItemComboBox_SelectionChanged">
+
+                            <ComboBox.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <VirtualizingStackPanel/>
+                                </ItemsPanelTemplate>
+                            </ComboBox.ItemsPanel>
+                        </ComboBox>
+                    </Grid>
+                </GroupBox>
+
+                <GroupBox 
+                    Name="TestingSettingsGroupBox" 
+                    Header="Testowanie sieci" 
+                    Margin="0,5,0,0" 
+                    IsEnabled="False">
+
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label
+                            Content="Na danych:"
+                            VerticalAlignment="Center"
+                            />
+
+                        <ComboBox
+                            Name="testDataTypeComboBox"
+                            Grid.Column="1"
+                            Margin="5"
+                            VerticalAlignment="Center"
+                            Initialized="testDataTypeComboBox_Initialized"
+                            />
+
+                        <Button
+                            Name="runTestButton"
+                            Grid.Row="1"
+                            Grid.ColumnSpan="2"
+                            Content="Testuj"
+                            Margin="5"
+                            Click="runTestButton_Click"
+                            />
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+
+            <StackPanel Grid.Column="1" Margin="5,0,0,0">
+                <GroupBox Header="Podgląd" Margin="0,0,0,5">
+                    <Viewbox  Stretch="Uniform">
+                        <Grid Name="ImageGrid" Margin="5" />
+                    </Viewbox>
+                </GroupBox>
+
+                <StackPanel Margin="0,5,0,5" Orientation="Horizontal">
+                    <CheckBox 
+                        Content="Pokaż siatkę" 
+                        VerticalAlignment="Center"
+                        Margin="0,0,5,0"
+                        Checked="ShowGrid_CheckBox_Checked"
+                        Unchecked="ShowGrid_CheckBox_Unchecked"
+                        />
+
+                    <CheckBox 
+                        Content="Włącz edycję" 
+                        VerticalAlignment="Center"
+                        Margin="5,0,5,0"
+                        Checked="EnableEdit_CheckBox_Checked"
+                        Unchecked="EnableEdit_CheckBox_Unchecked"
+                        />
+                    
+                    <TextBox
+                        Name="userCorrectImageValue"
+                        VerticalAlignment="Center"
+                        Margin="5,0,5,0"
+                        Width="20"
+                        LostFocus="userCorrectImageValue_LostFocus"
+                        IsEnabled="False"
+                        />
+
+                    <Button
+                        Name="checkButton"
+                        Content="Sprawdź"
+                        Width="55"
+                        Margin="5,0,5,0"
+                        IsEnabled="False"
+                        Click="Check_Button_Click"
+                        />
+
+                    <Button
+                        Name="clearButton"
+                        Content="Wyczyść"
+                        Width="55"
+                        Margin="5,0,0,0"
+                        IsEnabled="False"
+                        Click="Clear_Button_Click"
+                        />
+                </StackPanel>
+
+                <GroupBox Header="Wynik" Margin="0,5,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label
+                            Content="Oczekiwana odpowiedź:"
+                            VerticalAlignment="Center"
+                            />
+
+                        <Label
+                            Grid.Row="1"
+                            Content="Odpowiedź sieci:"
+                            VerticalAlignment="Center"
+                            />
+
+                        <Label
+                            Grid.Row="2"
+                            Content="Prawdopodobieństwo:"
+                            VerticalAlignment="Center"
+                            />
+
+                        <Label
+                            Name="expectedOutputLabel"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            />
+
+                        <Label
+                            Name="neuralNetOutputLabel"
+                            Grid.Row="1"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            />
+
+                        <Label
+                            Name="outputProbabilityLabel"
+                            Grid.Row="2"
+                            Grid.Column="1"
+                            VerticalAlignment="Center"
+                            HorizontalAlignment="Center"
+                            />
+                    </Grid>
+                </GroupBox>
+            </StackPanel>
+        </Grid>
+    </DockPanel>
+</Window>
